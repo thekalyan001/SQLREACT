@@ -112,19 +112,37 @@ app.post('/update-profile', (req, res) => {
             console.log("update userId is: ", userId);
             // Extract updated fields from the request body
             const { name, email, age, dob, contact, school } = req.body;
-            // Update login table with updated name and email
+            // Update login table with updated name
             const updateLoginQuery = "UPDATE login SET name=? WHERE id=?";
             db.query(updateLoginQuery, [name, userId], (err) => {
                 if (err) {
                     return res.json("Error updating login details");
                 }
-                // Update person_details table with updated age, dob, and contact
-                const updatePersonDetailsQuery = "UPDATE person_details SET age=?, dob=?, contact=?, school=? WHERE id=?";
-                db.query(updatePersonDetailsQuery, [age, dob, contact, school, userId], (err) => {
+                // Check if the user exists in person_details
+                const checkUserQuery = "SELECT * FROM person_details WHERE id=?";
+                db.query(checkUserQuery, [userId], (err, userData) => {
                     if (err) {
-                        return res.json("Error updating person details");
+                        return res.json("Error checking user details");
                     }
-                    return res.json("Profile updated successfully");
+                    if (userData.length === 0) {
+                        // If user does not exist, insert new row
+                        const insertUserQuery = "INSERT INTO person_details (id, age, dob, contact, school) VALUES (?, ?, ?, ?, ?)";
+                        db.query(insertUserQuery, [userId, age, dob, contact, school], (err) => {
+                            if (err) {
+                                return res.json("Error adding new user details");
+                            }
+                            return res.json("Profile updated successfully");
+                        });
+                    } else {
+                        // If user exists, update their details
+                        const updatePersonDetailsQuery = "UPDATE person_details SET age=?, dob=?, contact=?, school=? WHERE id=?";
+                        db.query(updatePersonDetailsQuery, [age, dob, contact, school, userId], (err) => {
+                            if (err) {
+                                return res.json("Error updating person details");
+                            }
+                            return res.json("Profile updated successfully");
+                        });
+                    }
                 });
             });
         } else {
@@ -132,6 +150,7 @@ app.post('/update-profile', (req, res) => {
         }
     });
 });
+
 
 
 app.listen(8081, ()=>{
