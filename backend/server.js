@@ -8,9 +8,9 @@ app.use(express.json()) //parse the data into json
 
 const db=mysql.createConnection({
     host: "sql6.freesqldatabase.com",
-    user: "sql6682891",
-    password: "2YVkxLidZZ",
-    database: "sql6682891",
+    user: "***",
+    password: "****",
+    database: "***",
 })
 
 // Signup api
