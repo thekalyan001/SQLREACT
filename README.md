@@ -6,7 +6,8 @@
 npm i both side server and frontend
 npm start
 
-add your credentials in server.js file in below code:-
+- ### ⚙️ &nbsp; Add your credentials in server.js file in below code:-
+
 
 const db=mysql.createConnection({
     host: "sql6.freesqldatabase.com",
